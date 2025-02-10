@@ -78,9 +78,10 @@ jobs:
          sed -i 's/ -dirty//g' kernel_platform/msm-kernel/scripts/setlocalversion
 
       - name: Edit kernel version name
-        if: ${{ github.event.inputs.KERNEL_Name !=" }}
+        if: ${{ !contains(github.event.inputs.KERNEL_NAME, '') }}
         run: |
          cd kernel_workspace/kernel_platform
+         echo "Optional parameter is not empty, running this step."
          sed -i '$s|echo "\$res"|echo "-${{ github.event.inputs.KERNEL_NAME }}"|' kernel_platform/common/scripts/setlocalversion
          
       - name: Set up KernelSU Next
