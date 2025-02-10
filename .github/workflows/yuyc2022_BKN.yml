@@ -78,7 +78,7 @@ jobs:
          sed -i 's/ -dirty//g' kernel_platform/msm-kernel/scripts/setlocalversion
 
       - name: Edit kernel version name
-        if: github.event.inputs.KERNEL_Name !=
+        if: ${{ github.event.inputs.KERNEL_Name !=" }}
         run: |
          cd kernel_workspace/kernel_platform
          sed -i '$s|echo "\$res"|echo "-${{ github.event.inputs.KERNEL_NAME }}"|' kernel_platform/common/scripts/setlocalversion
