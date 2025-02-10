@@ -1,4 +1,4 @@
-name: Build KernelSU Next by yuyc2022&yuhang2006
+name: Build KernelSU Next for self
 on:
   workflow_dispatch:
     inputs:
@@ -32,6 +32,10 @@ on:
         required: true
         type: boolean
         default: false
+      KERNEL_NAME:
+        description: "自定义内核后版本名"
+        required: true
+        default: '1145141919810'
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -72,7 +76,7 @@ jobs:
          rm kernel_platform/msm-kernel/android/abi_gki_protected_exports_* || echo "No protected exports!"
          sed -i 's/ -dirty//g' kernel_platform/common/scripts/setlocalversion
          sed -i 's/ -dirty//g' kernel_platform/msm-kernel/scripts/setlocalversion
-         sed -i '$s|echo "\$res"|echo "\$res-yuhangkernel"|' kernel_platform/common/scripts/setlocalversion
+         sed -i '$s|echo "\$res"|echo "\${{ github.event.inputs.KERNEL_NAME }}"|' kernel_platform/common/scripts/setlocalversion
          
       - name: Set up KernelSU Next
         if: github.event.inputs.KSUNEXT_ENABLED == 'true'
