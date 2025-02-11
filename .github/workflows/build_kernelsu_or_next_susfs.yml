@@ -1,4 +1,4 @@
-name: Build KernelSU Next
+name: Build KernelSU or KernelSU Next
 on:
   workflow_dispatch:
     inputs:
@@ -22,11 +22,14 @@ on:
         description: "内核版本"
         required: true
         default: '6.1'
-      KSUNEXT_ENABLED:
-        description: "添加 KSU Next"
+      IF_KSU_OR_NEXT_OR_NONE:
+        description: "是否启用ksu或ksu next"
         required: true
-        type: boolean
-        default: false
+        type: choice
+        options:
+          - ksu
+          - ksu-next
+          - none
       SUSFS_ENABLED:
         description: "添加 SUSFS"
         required: true
@@ -80,12 +83,22 @@ jobs:
            sed -i '$s|echo "\$res"|echo "-${{ github.event.inputs.KERNEL_NAME }}"|' kernel_platform/common/scripts/setlocalversion
          fi
          
-      - name: Set up KernelSU Next
-        if: github.event.inputs.KSUNEXT_ENABLED == 'true'
+      - name: Set up KernelSU-Next
+        if: github.event.inputs.IF_KSU_OR_NEXT_OR_NONE == 'ksu-next'
         run: |
          cd kernel_workspace/kernel_platform
          curl -LSs "https://raw.githubusercontent.com/rifsxd/KernelSU-Next/next/kernel/setup.sh" | bash -s next-susfs
          cd KernelSU-Next
+         KSU_VERSION=$(expr $(/usr/bin/git rev-list --count HEAD) "+" 10200)
+         echo "KSUVER=$KSU_VERSION" >> $GITHUB_ENV
+         sed -i "s/DKSU_VERSION=16/DKSU_VERSION=${KSU_VERSION}/" kernel/Makefile
+
+      - name: Set up KernelSU
+        if: github.event.inputs.IF_KSU_OR_NEXT_OR_NONE == 'ksu'
+        run: |
+         cd kernel_workspace/kernel_platform
+         curl -LSs "https://raw.githubusercontent.com/tiann/KernelSU/main/kernel/setup.sh" | bash
+         cd KernelSU
          KSU_VERSION=$(expr $(/usr/bin/git rev-list --count HEAD) "+" 10200)
          echo "KSUVER=$KSU_VERSION" >> $GITHUB_ENV
          sed -i "s/DKSU_VERSION=16/DKSU_VERSION=${KSU_VERSION}/" kernel/Makefile
