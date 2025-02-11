@@ -31,7 +31,7 @@ on:
           - ksu-next
           - none
       SUSFS_ENABLED:
-        description: "添加 SUSFS"
+        description: "添加 SUSFS(如果不选择ksu next将不会生效)"
         required: true
         type: boolean
         default: false
@@ -47,7 +47,7 @@ jobs:
       - name: Maximize build space
         uses: easimon/maximize-build-space@master
         with:
-          root-reserve-mb: 8192
+          root-reserve-mb: 16384
           temp-reserve-mb: 2048
           remove-dotnet: 'true'
           remove-android: 'true'
@@ -104,20 +104,13 @@ jobs:
          sed -i "s/DKSU_VERSION=16/DKSU_VERSION=${KSU_VERSION}/" kernel/Makefile
         
       - name: Set up susfs
-        if: github.event.inputs.SUSFS_ENABLED == 'true'
+        if: github.event.inputs.SUSFS_ENABLED == 'true' && github.event.inputs.IF_KSU_OR_NEXT_OR_NONE == 'ksu-next'
         run: |
            cd kernel_workspace
            git clone https://gitlab.com/simonpunk/susfs4ksu.git -b gki-${{ github.event.inputs.ANDROID_VERSION }}-${{ github.event.inputs.KERNEL_VERSION }}
            git clone https://github.com/TheWildJames/kernel_patches.git
            cd kernel_platform
-           if [ "${{ github.event.inputs.KERNEL_NAME }}" = "ksu-next" ]; then
-             echo "使用kernelSU-next目录"
-             cp ../susfs4ksu/kernel_patches/KernelSU/10_enable_susfs_for_ksu.patch ./KernelSU-Next/
-           fi
-           if [ "${{ github.event.inputs.KERNEL_NAME }}" = "ksu" ]; then
-             echo "使用kernelSU目录"
-             cp ../susfs4ksu/kernel_patches/KernelSU/10_enable_susfs_for_ksu.patch ./KernelSU/
-           fi
+           cp ../susfs4ksu/kernel_patches/KernelSU/10_enable_susfs_for_ksu.patch ./KernelSU-Next/
            cp ../susfs4ksu/kernel_patches/50_add_susfs_in_gki-${{ github.event.inputs.ANDROID_VERSION }}-${{ github.event.inputs.KERNEL_VERSION }}.patch ./common/
            cp ../susfs4ksu/kernel_patches/fs/* ./common/fs/
            cp ../susfs4ksu/kernel_patches/include/linux/* ./common/include/linux/
