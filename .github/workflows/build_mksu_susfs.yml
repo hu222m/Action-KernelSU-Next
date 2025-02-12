@@ -102,7 +102,7 @@ jobs:
            cd ./KernelSU
            patch -p1 < 10_enable_susfs_for_ksu.patch
            cd ../common
-           patch -p1 < 50_add_susfs_in_gki-${{ github.event.inputs.ANDROID_VERSION }}-${{ github.event.inputs.KERNEL_VERSION }}.patch
+           patch -p1 < 50_add_susfs_in_gki-${{ github.event.inputs.ANDROID_VERSION }}-${{ github.event.inputs.KERNEL_VERSION }}.patch || true
            
       - name: Build kernel
         run: |
