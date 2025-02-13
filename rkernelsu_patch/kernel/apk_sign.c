@@ -319,10 +319,10 @@ module_param_cb(ksu_debug_manager_uid, &expected_size_ops,
 
 bool ksu_is_manager_apk(char *path)
 {
-#ifdef CONFIG_KSU_SUSFS
 	return (check_v2_signature(path, EXPECTED_SIZE, EXPECTED_HASH) ||
-			check_v2_signature(path, 384, "7e0c6d7278a3bb8e364e0fcba95afaf3666cf5ff3c245a3b63c8833bd0445cc4")); // 5ec1cff
-#else
- 	return check_v2_signature(path, EXPECTED_SIZE, EXPECTED_HASH);
+// 5ec1cff/KernelSU only works on GKI kernels
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(5, 10, 0)
+		check_v2_signature(path, EXPECTED_SIZE_5EC1CFF, EXPECTED_HASH_5EC1CFF) ||
 #endif
+		check_v2_signature(path, EXPECTED_SIZE_RSUNTK, EXPECTED_HASH_RSUNTK));
 }
