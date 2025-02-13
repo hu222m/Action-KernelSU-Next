@@ -28,7 +28,7 @@ on:
         type: boolean
         default: false
       SUSFS_ENABLED:
-        description: "添加 SUSFS"
+        description: "添加 SUSFS(功能异常待修复)"
         required: true
         type: boolean
         default: false
