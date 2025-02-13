@@ -104,7 +104,7 @@ jobs:
            # 将手动修补的文件替换掉修补失败的文件
            cd ..
            rsync -avz ../Action-KernelSU-Next/rkernelsu_patch/kernel/ ./KernelSU/kernel
-           cd ../common
+           cd ./common
            patch -p1 -f < 50_add_susfs_in_gki-${{ github.event.inputs.ANDROID_VERSION }}-${{ github.event.inputs.KERNEL_VERSION }}.patch || true
            
       - name: Build kernel
