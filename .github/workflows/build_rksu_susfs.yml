@@ -103,7 +103,7 @@ jobs:
            patch -p1 -f < 10_enable_susfs_for_ksu.patch || true
            # 将手动修补的文件替换掉修补失败的文件
            cd ..
-           rsync -avz ../Action-KernelSU-Next/rkernelsu_patch/kernel/ ./KernelSU/kernel
+           #rsync -avz ../Action-KernelSU-Next/rkernelsu_patch/kernel/ ./KernelSU/kernel
            cd ./common
            patch -p1 -f < 50_add_susfs_in_gki-${{ github.event.inputs.ANDROID_VERSION }}-${{ github.event.inputs.KERNEL_VERSION }}.patch || true
            
