@@ -82,6 +82,8 @@ jobs:
         run: |
          cd kernel_workspace/kernel_platform
          curl -LSs "https://raw.githubusercontent.com/rsuntk/KernelSU/refs/heads/susfs-v1.5.5/kernel/setup.sh" | bash -
+         rm -rf KernelSU
+         git clone https://github.com/rsuntk/KernelSU.git -b susfs-v1.5.5
          cd KernelSU
          # 从 kernel/Makefile 中提取 DKSU_VERSION 的值
          KSU_VERSION=$(grep '^ccflags-y.*-DKSU_VERSION=' kernel/Makefile | awk -F'=' '{print $NF}' | tr -d '"')
