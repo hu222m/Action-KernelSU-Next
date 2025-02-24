@@ -92,7 +92,7 @@ jobs:
         run: |
            cd kernel_workspace
            git clone https://gitlab.com/simonpunk/susfs4ksu.git -b gki-${{ github.event.inputs.ANDROID_VERSION }}-${{ github.event.inputs.KERNEL_VERSION }}
-           git clone https://github.com/yuhangle/Action-KernelSU-Next.git
+           #git clone https://github.com/yuhangle/Action-KernelSU-Next.git
            cd kernel_platform
            cp ../susfs4ksu/kernel_patches/KernelSU/10_enable_susfs_for_ksu.patch ./KernelSU/
            cp ../susfs4ksu/kernel_patches/50_add_susfs_in_gki-${{ github.event.inputs.ANDROID_VERSION }}-${{ github.event.inputs.KERNEL_VERSION }}.patch ./common/
@@ -100,8 +100,8 @@ jobs:
            cp ../susfs4ksu/kernel_patches/include/linux/* ./common/include/linux/
            # Apply patches
            cd ./KernelSU
-           patch -p1 -f < 10_enable_susfs_for_ksu.patch || true
-           # 将手动修补的文件替换掉修补失败的文件
+           # 新的rksu的susfs分支疑似已经进行了修补,无需重复修补
+           #patch -p1 -f < 10_enable_susfs_for_ksu.patch || true
            cd ..
            #rsync -avz ../Action-KernelSU-Next/rkernelsu_patch/kernel/ ./KernelSU/kernel
            cd ./common
