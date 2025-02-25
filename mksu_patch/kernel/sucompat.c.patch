@@ -1,0 +1,56 @@
+--- sucompat.c	2025-02-25 20:37:12.919159000 +0800
++++ sucompat.c	2025-02-25 19:25:04.717719100 +0800
+@@ -1,3 +1,8 @@
++static struct kprobe *execve_kp;
++static struct kprobe *newfstatat_kp;
++static struct kprobe *faccessat_kp;
++static struct kprobe *pts_unix98_lookup_kp;
++
+ #include <linux/dcache.h>
+ #include <linux/security.h>
+ #include <asm/current.h>
+@@ -290,10 +295,10 @@
+ // sucompat: permited process can execute 'su' to gain root access.
+ void ksu_sucompat_init()
+ {
+-	su_kps[0] = init_kprobe(SYS_EXECVE_SYMBOL, execve_handler_pre);
+-	su_kps[1] = init_kprobe(SYS_FACCESSAT_SYMBOL, faccessat_handler_pre);
+-	su_kps[2] = init_kprobe(SYS_NEWFSTATAT_SYMBOL, newfstatat_handler_pre);
+-	su_kps[3] = init_kprobe("pts_unix98_lookup", pts_unix98_lookup_pre);
++    execve_kp = init_kprobe(SYS_EXECVE_SYMBOL, execve_handler_pre);
++    newfstatat_kp = init_kprobe(SYS_FACCESSAT_SYMBOL, faccessat_handler_pre);
++    faccessat_kp = init_kprobe(SYS_NEWFSTATAT_SYMBOL, newfstatat_handler_pre);
++    pts_unix98_lookup_kp = init_kprobe("pts_unix98_lookup", pts_unix98_lookup_pre);
+ }
+ 
+ void ksu_sucompat_exit()
+@@ -307,19 +312,19 @@
+ extern bool ksu_devpts_hook;
+ 
+ void ksu_susfs_disable_sus_su(void) {
+-	enable_kprobe(&execve_kp);
+-	enable_kprobe(&newfstatat_kp);
+-	enable_kprobe(&faccessat_kp);
+-	enable_kprobe(&pts_unix98_lookup_kp);
+-	ksu_devpts_hook = false;
++    enable_kprobe(execve_kp);
++    enable_kprobe(newfstatat_kp);
++    enable_kprobe(faccessat_kp);
++    enable_kprobe(pts_unix98_lookup_kp); // Corrected line
++    ksu_devpts_hook = false;
+ }
+ 
+ void ksu_susfs_enable_sus_su(void) {
+-	disable_kprobe(&execve_kp);
+-	disable_kprobe(&newfstatat_kp);
+-	disable_kprobe(&faccessat_kp);
+-	disable_kprobe(&pts_unix98_lookup_kp);
+-	ksu_devpts_hook = true;
++    disable_kprobe(execve_kp);
++    disable_kprobe(newfstatat_kp);
++    disable_kprobe(faccessat_kp);
++    disable_kprobe(pts_unix98_lookup_kp); // Corrected line
++    ksu_devpts_hook = true;
+ }
+ #endif // #ifdef CONFIG_KSU_SUSFS_SUS_SU
+ 
