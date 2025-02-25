@@ -45,7 +45,7 @@ jobs:
         uses: easimon/maximize-build-space@master
         with:
           root-reserve-mb: 16384
-          temp-reserve-mb: 2048
+          temp-reserve-mb: 4096
           remove-dotnet: 'true'
           remove-android: 'true'
           remove-haskell: 'true'
@@ -83,8 +83,8 @@ jobs:
          cd kernel_workspace/kernel_platform
          curl -LSs "https://raw.githubusercontent.com/5ec1cff/KernelSU/refs/heads/main/kernel/setup.sh" | bash -
          cd KernelSU
+         git revert -m 1 $(git log --grep="remove devpts hook" --pretty=format:"%H") -n
          KSU_VERSION=$(expr $(/usr/bin/git rev-list --count HEAD) "+" 10200)
-         echo "KSUVER=$KSU_VERSION" >> $GITHUB_ENV
          sed -i "s/DKSU_VERSION=16/DKSU_VERSION=${KSU_VERSION}/" kernel/Makefile
         
       - name: Set up susfs
@@ -106,7 +106,10 @@ jobs:
            patch -p1 -f < mksu_susfs.patch || true
            cd ../common
            patch -p1 -f < 50_add_susfs_in_gki-${{ github.event.inputs.ANDROID_VERSION }}-${{ github.event.inputs.KERNEL_VERSION }}.patch || true
-           
+           cp ../../kernel_patches/69_hide_stuff.patch ./
+           patch -p1 -F 3 < 69_hide_stuff.patch
+
+
       - name: Build kernel
         run: |
          cd kernel_workspace
