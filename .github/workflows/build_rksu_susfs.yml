@@ -85,21 +85,9 @@ jobs:
          #rm -rf KernelSU
          #git clone https://github.com/rsuntk/KernelSU.git -b susfs-v1.5.5
          cd KernelSU
-         # 从 kernel/Makefile 中提取 DKSU_VERSION 的值
-         KSU_VERSION=$(grep '^ccflags-y.*-DKSU_VERSION=' kernel/Makefile | awk -F'=' '{print $NF}' | tr -d '"')
-
-         # 检查是否成功提取到版本号
-         if [ -z "$KSU_VERSION" ]; then
-           echo "未在 kernel/Makefile 中找到 DKSU_VERSION"
-           exit 1
-         fi
-
-         # 将 KSU_VERSION 写入 GitHub 环境变量
+         KSU_VERSION=$(expr $(/usr/bin/git rev-list --count HEAD) "+" 10200)
          echo "KSUVER=$KSU_VERSION" >> $GITHUB_ENV
-
-         #KSU_VERSION=$(expr $(/usr/bin/git rev-list --count HEAD) "+" 10200)
-         #echo "KSUVER=$KSU_VERSION" >> $GITHUB_ENV
-         #sed -i "s/DKSU_VERSION=16/DKSU_VERSION=${KSU_VERSION}/" kernel/Makefile
+         sed -i "s/DKSU_VERSION=16/DKSU_VERSION=${KSU_VERSION}/" kernel/Makefile
         
       - name: Set up susfs
         if: github.event.inputs.SUSFS_ENABLED == 'true'
