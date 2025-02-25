@@ -1,4 +1,4 @@
-name: Build MKSU
+name: Build MKSU(susfs暂不可用,寻找其它构建脚本)
 on:
   workflow_dispatch:
     inputs:
