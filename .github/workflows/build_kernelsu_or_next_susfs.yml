@@ -91,7 +91,7 @@ jobs:
          cd KernelSU-Next
          KSU_VERSION=$(expr $(/usr/bin/git rev-list --count HEAD) "+" 10200)
          echo "KSUVER=$KSU_VERSION" >> $GITHUB_ENV
-         sed -i "s/DKSU_VERSION=16/DKSU_VERSION=${KSU_VERSION}/" kernel/Makefile
+         sed -i "s/DKSU_VERSION=1/DKSU_VERSION=${KSU_VERSION}/" kernel/Makefile
 
       - name: Set up KernelSU
         if: github.event.inputs.IF_KSU_OR_NEXT_OR_NONE == 'ksu'
@@ -150,11 +150,11 @@ jobs:
       - name: Upload AnyKernel3
         uses: actions/upload-artifact@v4
         with:
-         name: AnyKernel3_${{ IF_KSU_OR_NEXT_OR_NONE }}_${{ env.KSUVER }}_${{ github.event.inputs.FEIL }}
+         name: AnyKernel3_${{ github.event.inputs.IF_KSU_OR_NEXT_OR_NONE }}_${{ env.KSUVER }}_${{ github.event.inputs.FEIL }}
          path: ./AnyKernel3/*
 
       - name: Upload Image
         uses: actions/upload-artifact@v4
         with:
-         name: Image_${{ IF_KSU_OR_NEXT_OR_NONE }}_${{ env.KSUVER }}_${{ github.event.inputs.FEIL }}
+         name: Image_${{ github.event.inputs.IF_KSU_OR_NEXT_OR_NONE }}_${{ env.KSUVER }}_${{ github.event.inputs.FEIL }}
          path: kernel_workspace/kernel_platform/out/msm-kernel-${{ github.event.inputs.CPUD }}-gki/dist/Image
